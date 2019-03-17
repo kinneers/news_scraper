@@ -25,24 +25,36 @@ app.use(express.static('public'));
 mongoose.connect("mongodb://localhost/newsdb", { useNewUrlParser: true });
 
 //Routes
+
+
+//Scrape and display Headline, Summary, URL... (other content is optional- photos, bylines, etc)
 app.get('/scrape', function(req, res) {
     //grab the body of the html with axios
-    axios.get('ADD URL HERE').then(function(response) {
+    axios.get('https://www.buzzfeed.com/').then(function(response) {
         //load that into cheerio and save it to $ for shorthand selector
         var $ = cheerio.load(response.data);
         
         //grab headline
-        $('HEADLINE ELEMENT').each(function(i, element) {
+        $('div.story-card').each(function(i, element) {
             //Save empty result object
             var result = {};
 
             //Add the headline, summary, and URL and save them as properties of the result object
             result.headline = $(this)
-                .children('PARENT ELEMENT')
+                .children('a')
+                .children('div')
+                .children('div')
+                .children('h2')
                 .text();
-            result.summary = $(this)
-                .children('PARENT ELEMENT')
+            result.link = $(this)
+                .children('a')
                 .attr('href');
+            result.summary = $(this)
+            .children('a')
+            .children('div')
+            .children('div')
+            .children('p')
+            .text();
             
             //Create new Article using the result object just built
             db.Article.create(result).then(function(dbArticle) {
@@ -57,10 +69,17 @@ app.get('/scrape', function(req, res) {
     });
 });
 
-//Scrape and display Headline, Summary, URL... (other content is optional- photos, bylines, etc)
-//Check that the article is not already in database before storing it- no duplicate stories
 //Don't just clear out database and populate with scraped articles whenever a user accesses site
 //If you app deletes stories every time someone visits, your users won't be able to see any comments except the ones that they post
+
+//Route to get all Articles from database
+app.get('/articles', function(req, res) {
+    db.Article.find({}).then(function(dbArticles) {
+        res.json(dbArticles);
+    }).catch(function(err) {
+        res.json(err);
+    });
+});
 
 //User comments- users may leave comments and revisit them later- the comments should be saved to the database as well and associated with their articles.  Users should also be able to delete comments left on articles.  All stored comments should be visible to every user
 

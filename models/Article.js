@@ -6,7 +6,7 @@ var Schema = mongoose.Schema;
 //Use Schema constructor to create new UserSchema object
 var ArticleSchema = new Schema({
     //Ensures that article titles are present in the form of unique strings
-    title: {
+    headline: {
         type: String,
         required: true,
         unique: true
