@@ -6,7 +6,7 @@ var Schema = mongoose.Schema;
 //Create new CommentSchema object with schema constructor
 var CommentSchema = new Schema({
     //Stores the comment text as a long string
-    text: {
+    text: [{
         type: String,
         validate: [
             function(input) {
@@ -14,7 +14,7 @@ var CommentSchema = new Schema({
             },
             "Thoughtful comments should be at least 10 characters long."
         ]
-    }
+    }]
 });
 
 //Create the model from the schema using mongoose's model method

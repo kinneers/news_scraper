@@ -15,10 +15,6 @@ var ArticleSchema = new Schema({
         type: String,
         required: true
     },
-    summary: {
-        type: String,
-        required: true
-    },
     comment: {
         //An object that stores a Comment id
         type: Schema.Types.ObjectId,

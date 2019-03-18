@@ -7,31 +7,18 @@ module.exports = function(app) {
     //Scrape and display Headline, Summary, URL... (other content is optional- photos, bylines, etc)
     app.get('/scrape', function(req, res) {
         //grab the body of the html with axios
-        axios.get('https://www.buzzfeed.com/').then(function(response) {
+        axios.get('https://news.ycombinator.com/').then(function(response) {
             //load that into cheerio and save it to $ for shorthand selector
             var $ = cheerio.load(response.data);
             
             //grab headline
-            $('div.story-card').each(function(i, element) {
+            $('td.title').each(function(i, element) {
                 //Save empty result object
                 var result = {};
 
                 //Add the headline, summary, and URL and save them as properties of the result object
-                result.headline = $(this)
-                    .children('a')
-                    .children('div')
-                    .children('div')
-                    .children('h2')
-                    .text();
-                result.link = $(this)
-                    .children('a')
-                    .attr('href');
-                result.summary = $(this)
-                    .children('a')
-                    .children('div')
-                    .children('div')
-                    .children('p')
-                    .text();
+                result.headline = $(this).children('a').text();
+                result.link = $(this).children('a').attr('href');
                 
                 //Create new Article using the result object just built
                 db.Article.create(result).then(function(dbArticle) {
@@ -60,7 +47,7 @@ module.exports = function(app) {
 
     //Retrieves the information for the selected article and populates comments
     app.get('/article/:id', function(req, res) {
-        db.Article.find({ _id : req.params.id }).populate('comment').then(function(chosenArticle) {
+        db.Article.find({ _id : req.params.id }).populate( 'comment' ).then(function(chosenArticle) {
             res.json(chosenArticle);
         }).catch(function(err) {
             res.json(err);
