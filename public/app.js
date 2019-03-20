@@ -28,18 +28,22 @@ function chooseArticle() {
         console.log(headline);
         var link = data[0].link;
         console.log(link);
-        var comment;
+        var comments = data[0].comments;
+        console.log(comments);
         //console.log("Let's see if I can get that comment's text: " + data[0].comment.text[0])
-        data[0].comment ? comment = data[0].comment : comment = ["There are no comments for this article yet."];
-        console.log(comment);
+        //data[0].comments = [] ? comment = ("There are no comments for this article yet.") : comment;
+        
+        //Now I can return the ID for each comment associated with the article... I need to get each of these and display on the page next
+
         var dataId = data[0]._id;
         console.log(dataId);
         //Calls function to display commentary associated with chosen article as main content
-        displayCommentary(headline, link, comment, dataId);
+        displayCommentary(headline, link, comments, dataId);
     });
 }
 
-function displayCommentary(headline, link, comment, dataId) {
+function displayCommentary(headline, link, comments, dataId) {
+    console.log(comments);
     $('#pageTitle').text('');
 
     $('#mainContent').html(
@@ -60,13 +64,22 @@ function displayCommentary(headline, link, comment, dataId) {
             </div>
         </div>`
     );
-    for (i in comment) {
-        $('#comments').append(
-            `<h3>${comment[i]}</h3>`
-        );
-        var commentArray = [];
-        commentArray.push(comment[i].text);
-    };
+    for (i in comments) {
+        $.getJSON('/comment/' + comments[i], function(data) {
+            console.log('Data from the call to comment/:id is: ' + data[0].comment);
+            $('#comments').append(data[0].comment);
+        });
+    }
+            //data[0].comments = [] ? comment = ("There are no comments for this article yet.") : comment;
+
+    // for (i in comments) {
+    //     $('#comments').append(
+    //         `<h3>${comments[i]}</h3>`
+    //     );
+    //     var commentArray = [];
+    //     commentArray.push(comments[i].text);
+    // };
+
     //When user clicks button with id addComment:
     $(document).on("click tap", "button#addComment", function() {
         var articleId = dataId;
@@ -75,13 +88,13 @@ function displayCommentary(headline, link, comment, dataId) {
         console.log("ARTICLE ID from button click: " + articleId);
         console.log("TEXT from button click: " + commentText);
         
-        console.log('I want to see what logs for comment:' + commentArray)
+        console.log('I want to see what logs for comments:' + commentText);
         //Post comment to database
         $.ajax({
             method: "POST",
             url: "/comment/" + articleId,
             data: {
-                comment: commentArray,
+                comment: commentText,
                 article: articleId
             }
         }).then(function(data) {

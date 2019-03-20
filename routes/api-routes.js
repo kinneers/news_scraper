@@ -54,7 +54,17 @@ module.exports = function(app) {
         });
     });
 
-    //User comments- users may leave comments and revisit them later- the comments should be saved to the database as well and associated with their articles.  Users should also be able to delete comments left on articles.  All stored comments should be visible to every user
+    // DELETE ME LATER: User comments- users may leave comments and revisit them later- the comments should be saved to the database as well and associated with their articles.  Users should also be able to delete comments left on articles.  All stored comments should be visible to every user
+    
+    //Route to get each comment
+    app.get('/comment/:id', function(req, res) {
+        db.Comment.find({ _id : req.params.id }).then(function(newComment) {
+            console.log(req.params.id, newComment);
+            res.json(newComment);
+        }).catch(function(err) {
+            res.json(err);
+        });
+    });
 
     //Route to save or update a comment
     app.post('/comment/:id', function(req, res) {

@@ -8,6 +8,7 @@ var CommentSchema = new Schema({
     //Stores the comment text as a long string
     comment: {
         type: String,
+        required: true,
         validate: [
             function(input) {
                 return input.length >= 10;
