@@ -15,12 +15,12 @@ var ArticleSchema = new Schema({
         type: String,
         required: true
     },
-    comment: {
+    comments: [{
         //An object that stores a Comment id
         type: Schema.Types.ObjectId,
         //links the ObjectId to the Comment model
-        ref: "Comment"
-    }
+        ref: 'Comment'
+    }]
 });
 
 //Creates the model from the schema using mongoose's model method

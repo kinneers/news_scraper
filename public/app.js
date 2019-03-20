@@ -75,14 +75,14 @@ function displayCommentary(headline, link, comment, dataId) {
         console.log("ARTICLE ID from button click: " + articleId);
         console.log("TEXT from button click: " + commentText);
         
-        
         console.log('I want to see what logs for comment:' + commentArray)
         //Post comment to database
         $.ajax({
             method: "POST",
             url: "/comment/" + articleId,
             data: {
-                text: commentArray
+                comment: commentArray,
+                article: articleId
             }
         }).then(function(data) {
             console.log(data);
