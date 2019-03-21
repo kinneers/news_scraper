@@ -15,6 +15,11 @@ var ArticleSchema = new Schema({
         type: String,
         required: true
     },
+    saved: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
     comments: [{
         //An object that stores a Comment id
         type: Schema.Types.ObjectId,

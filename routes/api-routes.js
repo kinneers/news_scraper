@@ -80,12 +80,20 @@ module.exports = function(app) {
     });
 
     //Route to delete a comment
-    app.post('delete-comment/:id', function(req, res) {
-        db.Comment.deleteOne(req.body).then(function(dbComment) {
-            res.json(dbComment);
-        }).catch(function(err) {
-            res.json(err);
+    app.post('/delete/comment/:id', function(req, res) {
+        console.log(req.body.articleId);
+        console.log(req.body.commentId)
+        
+        db.Article.update(
+            { _id: req.body.articleId },
+            { $pull: { comments: req.body.commentId }}
+        ).exec();
+        
+        db.Comment.remove( { _id: req.body.commentId }, function (err) {
+            if (err) {console.log("Error");}
         });
-    });
+        
+    })
+
 
 };

@@ -67,23 +67,20 @@ function displayCommentary(headline, link, comments, dataId) {
     for (i in comments) {
         $.getJSON('/comment/' + comments[i], function(data) {
             console.log('Data from the call to comment/:id is: ' + data[0].comment);
-            $('#comments').append(data[0].comment);
+            $('#comments').append(
+                `<div>
+                    <p>${data[0].comment}</p>
+                    <button id="deleteComment" article-id="${data[0].article}" comment-id="${data[0]._id}" class="btn btn-outline-secondary" type="submit">Delete Comment</button>
+                </div>`
+            );
         });
-    }
-            //data[0].comments = [] ? comment = ("There are no comments for this article yet.") : comment;
-
-    // for (i in comments) {
-    //     $('#comments').append(
-    //         `<h3>${comments[i]}</h3>`
-    //     );
-    //     var commentArray = [];
-    //     commentArray.push(comments[i].text);
-    // };
+    };
 
     //When user clicks button with id addComment:
     $(document).on("click tap", "button#addComment", function() {
         var articleId = dataId;
         var commentText = $('textarea.comment').val();
+        headline = $('h3').text();
         
         console.log("ARTICLE ID from button click: " + articleId);
         console.log("TEXT from button click: " + commentText);
@@ -103,4 +100,36 @@ function displayCommentary(headline, link, comments, dataId) {
         }
         );
     });
+
+    //When user clicks button with id deleteComment:
+    $(document).on('click tap', 'button#deleteComment', function() {
+        console.log("Button Click Works!");
+        var articleId = $(this).attr('article-id');
+        var commentId = $(this).attr('comment-id');
+        
+        $.ajax({
+            method: 'POST',
+            url: '/delete/comment/' + commentId,
+            data: {
+                commentId: commentId,
+                articleId: articleId
+            }
+        }).then(function(data) {
+            console.log(data);
+        })
+        // //Post comment to database
+        // $.ajax({
+        //     method: "POST",
+        //     url: "/comment/" + articleId,
+        //     data: {
+        //         comment: commentText,
+        //         article: articleId
+        //     }
+        // }).then(function(data) {
+        //     console.log(data);
+        //     $('textarea.comment').val('');
+        // }
+        // );
+    });
+    
 };
