@@ -16,11 +16,11 @@ function scrapeArticles() {
     $.ajax({
         method: 'GET',
         url: '/scrape'
-    }).then(function() {
+    }).then(function(data) {
         console.log('Scraped!');
         displayMain();
     });
-}
+};
 
 //Gets and displays the scraped articles saved in the database
 function displayMain() {
@@ -52,7 +52,7 @@ function displayMain() {
                     </div>`
                 );
             };
-        }
+        };
     });
 };
 
@@ -77,7 +77,7 @@ function chooseArticle(articleId) {
             </div>`);
         //Calls function to display commentary associated with chosen article as main content
         $('#pageTitle').text('');
-        $('#mainContent').text(`${headline}`)
+        $('#mainContent').text(`${headline}`);
         $('#summary').append(
             `<hr><a href="${link}" target="_blank" class="btn btn-primary">Visit: ${link}</a><hr>
             <div id="comments"></div>

@@ -24,6 +24,7 @@ module.exports = function(app) {
                 db.Article.create(result).then(function(dbArticle) {
                     //View result in console
                     console.log(dbArticle);
+                    res.redirect('/');
                 }).catch(function(err) {
                     console.log(err);
                 });
