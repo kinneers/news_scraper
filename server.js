@@ -6,7 +6,7 @@ var mongoose = require('mongoose');
 //Require Models
 var db = require('./models');
 
-var PORT = 3000;
+var PORT = process.env.PORT || 3000;
 
 //Initialize Express
 var app = express();
@@ -19,8 +19,10 @@ app.use(express.json());
 //Makes static folder public
 app.use(express.static('public'));
 
+var MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost/mongoHeadlines';
+
 //Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/newsdb", { useNewUrlParser: true });
+mongoose.connect(MONGODB_URI);
 
 //Routes
 require("./routes/api-routes.js")(app);
