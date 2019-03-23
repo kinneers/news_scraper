@@ -1,91 +1,120 @@
-//Calls function to display articles as main content
+//Calls function to display all scraped articles in database
 displayMain();
+
 //When user clicks on a headline on main page (h3 tag with class main), run the chooseArticle function
-$(document).on('click tap', 'h3.main', chooseArticle);
+$(document).on('click tap', 'button.chosen', function(){
+    chooseArticle($(this).attr('data-id'));
+});
+//Event listener for the scrape button
+$(document).on('click tap', '#scrape', scrapeArticles);
+//Event lister for button click to return to main page
+$(document).on('click tap', '#mainPage', displayMain);
+//Event lister for delete article button
+$(document).on('click tap', 'button.delete', deleteArticle);
+
+function scrapeArticles() {
+    $.ajax({
+        method: 'GET',
+        url: '/scrape'
+    }).then(function() {
+        console.log('Scraped!');
+        displayMain();
+    });
+}
 
 //Gets and displays the scraped articles saved in the database
 function displayMain() {
-    $('#pageTitle').text('Click on a Headline to View Commentary');
+    $('#mainCard').html('');
+    $('#mainCard').html(
+        `<h5 id="pageTitle" class="card-header"></h5>
+        <div class="card-body">
+            <h3 id="mainContent" class="card-title"></h3>
+        </div>`);
+    
     $.getJSON('/articles', function(data) {
-        $('mainContent').text('');
-        for (i in data) {
-            $('#mainContent').append('<h3 class="main" data-id="' + data[i]._id + '">' + data[i].headline + '</h3>');
-        };
+        //console.log(data);
+        if (data.length === 0) {
+            $('#pageTitle').text('No articles in database. Click the Scrape Articles button to retreive articles.');
+        } else {
+            $('#pageTitle').text('Click on a Headline to View Commentary');
+            $('mainContent').text('');
+            for (i in data) {
+                $('#mainContent').append(
+                    `<div class="card">
+                        <div class="card-header">
+                            ${data[i].headline}
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">This text will be replaced by summary</p>
+                            <button data-id="${data[i]._id}" class="btn btn-primary chosen">View Article</button>
+                            <button data-id="${data[i]._id}" class="btn btn-danger delete">Delete Article</button>
+                        </div>
+                    </div>`
+                );
+            };
+        }
     });
 };
 
-function chooseArticle() {
-    //Saves the id from the h3 tag
-    var thisId = $(this).attr('data-id');
-    //Ajax call for the Article
+function chooseArticle(articleId) {
+    $('#mainCard').html('');
+    var thisId = articleId ? articleId : $(this).attr('data-id');
     $.ajax({
         method: 'GET',
         url: '/article/' + thisId
     }).then(function(data) {
         //Display chosen article and any current comments along with textarea for new comments 
-        console.log(data);
+        //console.log(data);
         var headline = data[0].headline;
-        console.log(headline);
         var link = data[0].link;
-        console.log(link);
-        var comments = data[0].comments;
-        console.log(comments);
-        //console.log("Let's see if I can get that comment's text: " + data[0].comment.text[0])
-        //data[0].comments = [] ? comment = ("There are no comments for this article yet.") : comment;
-        
-        //Now I can return the ID for each comment associated with the article... I need to get each of these and display on the page next
-
+        var comments = data[0].comments;        
         var dataId = data[0]._id;
-        console.log(dataId);
+        $('#mainCard').html(
+            `<h5 id="pageTitle" class="card-header"></h5>
+            <div class="card-body">
+                <h3 id="mainContent" class="card-title"></h3>
+                <p id="summary" class="card-text">This text has the ID of summary (delete this from HTML later)</p>
+            </div>`);
         //Calls function to display commentary associated with chosen article as main content
-        displayCommentary(headline, link, comments, dataId);
+        $('#pageTitle').text('');
+        $('#mainContent').text(`${headline}`)
+        $('#summary').append(
+            `<hr><a href="${link}" target="_blank" class="btn btn-primary">Visit: ${link}</a><hr>
+            <div id="comments"></div>
+            <br>
+            <div class="card">
+                <div class="card-header">
+                    <strong>Add A Comment!</strong>
+                </div>
+                <div class="input-group">
+                    <textarea class="form-control comment" aria-label="With textarea"></textarea>
+                    <div class="input-group-append" id="button-addon4">
+                        <button id="addComment" data-id="${dataId}" class="btn btn-outline-secondary" type="submit">Add Comment</button>
+                    </div>
+                </div>
+            </div>`
+        );
+        for (i in comments) {
+            $.getJSON('/comment/' + comments[i], function(data) {
+                //console.log('Data from the call to comment/:id is: ' + data[0].comment);
+                $('#comments').append(
+                    `<div class="card">
+                        <div class="card-header"></div>
+                        <div class="card-body">
+                            <h5 class="card-title">${data[0].comment}</h5>
+                            <button id="deleteComment" data-id="${dataId}" article-id="${data[0].article}" comment-id="${data[0]._id}" class="btn btn-danger">Delete Comment</button>
+                        </div>
+                    </div>`
+                );
+            });
+        };
     });
-}
-
-function displayCommentary(headline, link, comments, dataId) {
-    console.log(comments);
-    $('#pageTitle').text('');
-
-    $('#mainContent').html(
-        `<div id="headline">
-            <h3>${headline}</h3>
-        </div>
-        <div id="link">
-            <a href="${link} target="_blank">${link}</a>
-        </div>
-        <div id="comments">
-        </div>
-        <div>
-        <div id="chosen-article"></div>
-        <div class="input-group">
-            <textarea class="form-control comment" aria-label="With textarea"></textarea>
-            <div class="input-group-append" id="button-addon4">
-                <button id="addComment" class="btn btn-outline-secondary" type="submit">Add Comment</button>
-            </div>
-        </div>`
-    );
-    for (i in comments) {
-        $.getJSON('/comment/' + comments[i], function(data) {
-            console.log('Data from the call to comment/:id is: ' + data[0].comment);
-            $('#comments').append(
-                `<div>
-                    <p>${data[0].comment}</p>
-                    <button id="deleteComment" article-id="${data[0].article}" comment-id="${data[0]._id}" class="btn btn-outline-secondary" type="submit">Delete Comment</button>
-                </div>`
-            );
-        });
-    };
 
     //When user clicks button with id addComment:
     $(document).on("click tap", "button#addComment", function() {
-        var articleId = dataId;
+        var articleId = $(this).attr('data-id');
         var commentText = $('textarea.comment').val();
-        headline = $('h3').text();
-        
-        console.log("ARTICLE ID from button click: " + articleId);
-        console.log("TEXT from button click: " + commentText);
-        
-        console.log('I want to see what logs for comments:' + commentText);
+        $('textarea.comment').val('');
         //Post comment to database
         $.ajax({
             method: "POST",
@@ -95,10 +124,9 @@ function displayCommentary(headline, link, comments, dataId) {
                 article: articleId
             }
         }).then(function(data) {
-            console.log(data);
-            $('textarea.comment').val('');
-        }
-        );
+            console.log(data._id);
+            chooseArticle(data._id);
+        });
     });
 
     //When user clicks button with id deleteComment:
@@ -116,20 +144,21 @@ function displayCommentary(headline, link, comments, dataId) {
             }
         }).then(function(data) {
             console.log(data);
-        })
-        // //Post comment to database
-        // $.ajax({
-        //     method: "POST",
-        //     url: "/comment/" + articleId,
-        //     data: {
-        //         comment: commentText,
-        //         article: articleId
-        //     }
-        // }).then(function(data) {
-        //     console.log(data);
-        //     $('textarea.comment').val('');
-        // }
-        // );
+            chooseArticle(data);
+        });
     });
-    
+};
+
+function deleteArticle() {
+    articleId = $(this).attr('data-id');
+    $.ajax({
+        method: 'POST',
+        url: '/delete/article/' + articleId,
+        data: {
+            articleId: articleId
+        }
+    }).then(function(data) {
+        console.log(data);
+        displayMain();
+    });
 };

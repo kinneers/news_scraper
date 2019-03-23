@@ -28,13 +28,8 @@ module.exports = function(app) {
                     console.log(err);
                 });
             });
-            //Send message to client
-            res.send('Scrape Complete');
         });
     });
-
-    //Don't just clear out database and populate with scraped articles whenever a user accesses site
-    //If you app deletes stories every time someone visits, your users won't be able to see any comments except the ones that they post
 
     //Route to get all Articles from database
     app.get('/articles', function(req, res) {
@@ -53,13 +48,10 @@ module.exports = function(app) {
             res.json(err);
         });
     });
-
-    // DELETE ME LATER: User comments- users may leave comments and revisit them later- the comments should be saved to the database as well and associated with their articles.  Users should also be able to delete comments left on articles.  All stored comments should be visible to every user
     
     //Route to get each comment
     app.get('/comment/:id', function(req, res) {
         db.Comment.find({ _id : req.params.id }).then(function(newComment) {
-            console.log(req.params.id, newComment);
             res.json(newComment);
         }).catch(function(err) {
             res.json(err);
@@ -68,7 +60,6 @@ module.exports = function(app) {
 
     //Route to save or update a comment
     app.post('/comment/:id', function(req, res) {
-        console.log(req.body);
         db.Comment.create(req.body)
             .then(function(dbComment) {
             return db.Article.findOneAndUpdate({ _id: req.params.id }, {$push: { comments: dbComment._id }}, { new: true });
@@ -81,8 +72,7 @@ module.exports = function(app) {
 
     //Route to delete a comment
     app.post('/delete/comment/:id', function(req, res) {
-        console.log(req.body.articleId);
-        console.log(req.body.commentId)
+        var sendBack = req.body.articleId;
         
         db.Article.update(
             { _id: req.body.articleId },
@@ -91,9 +81,22 @@ module.exports = function(app) {
         
         db.Comment.remove( { _id: req.body.commentId }, function (err) {
             if (err) {console.log("Error");}
+
+        }).then(function() {
+            res.json(sendBack);
+        }).catch(function(err) {
+            res.json(err);
         });
-        
-    })
+    });
 
-
+    //Route to delete an article
+    app.post('/delete/article/:id', function(req, res) {
+        db.Article.findByIdAndDelete(
+            { _id: req.body.articleId }
+        ).then(function() {
+            res.send('Article Deleted');
+        }).catch(function(err) {
+            res.json(err);
+        });
+    });
 };

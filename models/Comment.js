@@ -16,6 +16,10 @@ var CommentSchema = new Schema({
             'Thoughtful comments should be at least 10 characters long.'
         ]
     },
+    updated: {
+        type: Date,
+        default: Date.now
+    },
     article: {
         type: Schema.Types.ObjectId,
         ref: 'Article',

@@ -9,10 +9,18 @@
     <link href="./style.css" type="text/css" rel="stylesheet">
 </head>
 <body>
-    <div id="wrapper">
-        <h1 id="pageTitle"></h1>
-        <div id="mainContent"></div>
+    <nav class="navbar navbar-light bg-light">
+        <form class="form-inline">
+            <button id="scrape" class="btn btn-outline-success" type="button">Scrape Articles</button>
+            <button id="mainPage" class="btn btn-outline-success" type="button">Main Page</button>
+        </form>
+    </nav>
+    <div class="jumbotron">
+        <h1 class="display-4">Welcome to News and Commentary!</h1> 
     </div>
+
+    <div id="mainCard" class="card"></div>
+
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="app.js"></script>
