@@ -52,7 +52,7 @@ module.exports = function(app) {
         });
     });
     
-    //Route to get each comment
+    //Route to get each comment for a selected article
     app.get('/comment/:id', function(req, res) {
         db.Comment.find({ _id : req.params.id }).then(function(newComment) {
             res.json(newComment);

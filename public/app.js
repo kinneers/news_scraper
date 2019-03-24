@@ -97,12 +97,23 @@ function chooseArticle(articleId) {
                 </div>
             </div>`
         );
+        //Initialize array for comments to be sorted into
+        var sortedComments = [];
+        //Fort each comment Id in the comments array for this particular article...
         for (i in comments) {
+            //...get request returns comment text and updated date
             $.ajax({
                 method: 'GET',
                 url: '/comment/' + comments[i]
             }).then(function(data) {
-                //console.log('Data from the call to comment/:id is: ' + data[0].comment);
+                console.log('I want to see what is in this resulting data: ' + data[0].updated);
+                //Update date/time for this comment is stored at data[0].updated
+                //Push each comment object into an array to be sorted
+                var commentObject = {'commentText': data[0].comment, 'updated': data[0].updated}
+                console.log('Data from the call to comment/:id is: ' + data[0].comment);
+                console.log('This should be the article id: ' + dataId);
+
+                //Move this to loop after the comment array of objects has been sorted
                 $('#comments').append(
                     `<div class="card">
                         <div class="card-header"></div>
@@ -114,6 +125,9 @@ function chooseArticle(articleId) {
                 );
             });
         };
+        //The comments array of objects needs to return here
+        //Then sort the objects in the array by updated date/time
+        //Then for loop to append each comment in order
     });
 };
 
@@ -138,7 +152,6 @@ $(document).on("click tap", "button#addComment", function() {
 
 //When user clicks button with id deleteComment:
 $(document).on('click tap', 'button#deleteComment', function() {
-    console.log("Button Click Works!");
     var articleId = $(this).attr('article-id');
     var commentId = $(this).attr('comment-id');
     
