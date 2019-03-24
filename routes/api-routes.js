@@ -43,7 +43,9 @@ module.exports = function(app) {
 
     //Retrieves the information for the selected article and populates comments
     app.get('/article/:id', function(req, res) {
-        db.Article.find({ _id : req.params.id }).populate( 'comment' ).then(function(chosenArticle) {
+        db.Article.find({ _id : req.params.id })
+        .populate({path: 'comment', options: {sort: {updated: -1}}})
+        .then(function(chosenArticle) {
             res.json(chosenArticle);
         }).catch(function(err) {
             res.json(err);
@@ -59,7 +61,7 @@ module.exports = function(app) {
         });
     });
 
-    //Route to save or update a comment
+    //Route to save a new comment
     app.post('/comment/:id', function(req, res) {
         db.Comment.create(req.body)
             .then(function(dbComment) {

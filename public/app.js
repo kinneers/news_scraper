@@ -57,6 +57,7 @@ function displayMain() {
 };
 
 function chooseArticle(articleId) {
+    console.log("I want to know what the articleID passed in is: " + articleId);
     $('#mainCard').html('');
     var thisId = articleId ? articleId : $(this).attr('data-id');
     $.ajax({
@@ -95,7 +96,10 @@ function chooseArticle(articleId) {
             </div>`
         );
         for (i in comments) {
-            $.getJSON('/comment/' + comments[i], function(data) {
+            $.ajax({
+                method: 'GET',
+                url: '/comment/' + comments[i]
+            }).then(function(data) {
                 //console.log('Data from the call to comment/:id is: ' + data[0].comment);
                 $('#comments').append(
                     `<div class="card">
@@ -109,45 +113,45 @@ function chooseArticle(articleId) {
             });
         };
     });
-
-    //When user clicks button with id addComment:
-    $(document).on("click tap", "button#addComment", function() {
-        var articleId = $(this).attr('data-id');
-        var commentText = $('textarea.comment').val();
-        $('textarea.comment').val('');
-        //Post comment to database
-        $.ajax({
-            method: "POST",
-            url: "/comment/" + articleId,
-            data: {
-                comment: commentText,
-                article: articleId
-            }
-        }).then(function(data) {
-            console.log(data._id);
-            chooseArticle(data._id);
-        });
-    });
-
-    //When user clicks button with id deleteComment:
-    $(document).on('click tap', 'button#deleteComment', function() {
-        console.log("Button Click Works!");
-        var articleId = $(this).attr('article-id');
-        var commentId = $(this).attr('comment-id');
-        
-        $.ajax({
-            method: 'POST',
-            url: '/delete/comment/' + commentId,
-            data: {
-                commentId: commentId,
-                articleId: articleId
-            }
-        }).then(function(data) {
-            console.log(data);
-            chooseArticle(data);
-        });
-    });
 };
+
+//When user clicks button with id addComment:
+$(document).on("click tap", "button#addComment", function() {
+    var articleId = $(this).attr('data-id');
+    var commentText = $('textarea.comment').val();
+    $('textarea.comment').val('');
+    //Post comment to database
+    $.ajax({
+        method: "POST",
+        url: "/comment/" + articleId,
+        data: {
+            comment: commentText,
+            article: articleId
+        }
+    }).then(function(data) {
+        console.log(data._id);
+        chooseArticle(data._id);
+    });
+});
+
+//When user clicks button with id deleteComment:
+$(document).on('click tap', 'button#deleteComment', function() {
+    console.log("Button Click Works!");
+    var articleId = $(this).attr('article-id');
+    var commentId = $(this).attr('comment-id');
+    
+    $.ajax({
+        method: 'POST',
+        url: '/delete/comment/' + commentId,
+        data: {
+            commentId: commentId,
+            articleId: articleId
+        }
+    }).then(function(data) {
+        console.log(data);
+        chooseArticle(data);
+    });
+});
 
 function deleteArticle() {
     articleId = $(this).attr('data-id');
