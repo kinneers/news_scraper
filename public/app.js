@@ -7,9 +7,11 @@ $(document).on('click tap', 'button.chosen', function(){
 });
 //Event listener for the scrape button
 $(document).on('click tap', '#scrape', scrapeArticles);
-//Event lister for button click to return to main page
+//Event listener for button click to return to main page
 $(document).on('click tap', '#mainPage', displayMain);
-//Event lister for delete article button
+//Event lister for clearing the database
+$(document).on('click tap', '#clearAll', clearDB);
+//Event listener for delete article button
 $(document).on('click tap', 'button.delete', deleteArticle);
 
 function scrapeArticles() {
@@ -166,3 +168,13 @@ function deleteArticle() {
         displayMain();
     });
 };
+
+function clearDB() {
+    $.ajax({
+        method: 'POST',
+        url: '/delete/all'
+    }).then(function(res) {
+        console.log(res);
+        displayMain();
+    })
+}

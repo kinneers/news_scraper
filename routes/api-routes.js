@@ -44,7 +44,7 @@ module.exports = function(app) {
     //Retrieves the information for the selected article and populates comments
     app.get('/article/:id', function(req, res) {
         db.Article.find({ _id : req.params.id })
-        .populate({path: 'comment', options: {sort: {'updated': -1}}})
+        .populate('comment')
         .then(function(chosenArticle) {
             res.json(chosenArticle);
         }).catch(function(err) {
@@ -92,12 +92,24 @@ module.exports = function(app) {
         });
     });
 
-    //Route to delete an article
+    //Route to delete an article and its related comments
     app.post('/delete/article/:id', function(req, res) {
         db.Article.findByIdAndDelete(
             { _id: req.body.articleId }
-        ).then(function() {
+        ).exec();
+        db.Comment.remove({ 'article' : req.body.articleId})
+        .then(function() {
             res.send('Article Deleted');
+        }).catch(function(err) {
+            res.json(err);
+        });
+    });
+
+    //Route to delete all articles and comments from database
+    app.post('/delete/all', function(req, res) {
+        db.Article.remove({}).exec();
+        db.Comment.remove({}).then(function(){
+            res.send('Database Cleared');
         }).catch(function(err) {
             res.json(err);
         });
