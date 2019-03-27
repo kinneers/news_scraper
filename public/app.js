@@ -100,7 +100,7 @@ function chooseArticle(articleId) {
                     <div class="card-header"></div>
                     <div class="card-body">
                         <h5 class="card-title">${data[0].comments[i].comment}</h5>
-                        <button id="deleteComment" data-id="${dataId}" article-id="${data[0].article}" comment-id="${data[0]._id}" class="btn btn-danger">Delete Comment</button>
+                        <button id="deleteComment" data-id="${dataId}" article-id="${dataId}" comment-id="${data[0].comments[i]._id}" class="btn btn-danger">Delete Comment</button>
                     </div>
                 </div>`
             );
@@ -139,6 +139,7 @@ $(document).on('click tap', 'button#deleteComment', function() {
             articleId: articleId
         }
     }).then(function(data) {
+        console.log(data);
         chooseArticle(data);
     });
 });
