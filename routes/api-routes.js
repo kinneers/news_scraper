@@ -44,7 +44,7 @@ module.exports = function(app) {
     //Retrieves the information for the selected article and populates comments
     app.get('/article/:id', function(req, res) {
         db.Article.find({ _id : req.params.id })
-        .populate('comment')
+        .populate('comments')
         .then(function(chosenArticle) {
             res.json(chosenArticle);
         }).catch(function(err) {
