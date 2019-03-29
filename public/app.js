@@ -13,6 +13,8 @@ $(document).on('click tap', '#clearAll', clearDB);
 $(document).on('click tap', 'button.delete', deleteArticle);
 
 function scrapeArticles() {
+    event.preventDefault();
+    console.log("Button Clicked!");
     $.ajax({
         method: 'GET',
         url: '/scrape'
@@ -37,7 +39,7 @@ function displayMain() {
         } else {
             $('#pageTitle').text('Click on a Headline to View Commentary');
             $('mainContent').text('');
-            for (i in data) {
+            for (var i in data) {
                 $('#mainContent').append(
                     `<div class="card">
                         <div class="card-header">
@@ -156,7 +158,7 @@ function deleteArticle() {
         console.log(data);
         displayMain();
     });
-};
+}
 
 function clearDB() {
     $.ajax({
