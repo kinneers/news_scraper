@@ -7,18 +7,37 @@ module.exports = function(app) {
     //Scrape and display Headline, Summary, URL... (other content is optional- photos, bylines, etc)
     app.get('/scrape', function(req, res) {
         //grab the body of the html with axios
-        axios.get('https://news.ycombinator.com/').then(function(response) {
+        axios.get('https://sciworthy.com/').then(function(response) {
             //load that into cheerio and save it to $ for shorthand selector
             var $ = cheerio.load(response.data);
             
             //grab headline
-            $('td.title').each(function(i, element) {
+            // eslint-disable-next-line no-unused-vars
+            $('article').each(function(i, element) {
                 //Save empty result object
                 var result = {};
 
                 //Add the headline, summary, and URL and save them as properties of the result object
-                result.headline = $(this).children('a').text();
-                result.link = $(this).children('a').attr('href');
+                result.headline = $(this)
+                    .children('div.out-thumb')
+                    .children('header')
+                    .children('h1')
+                    .children('a')
+                    .children('span.entry-title-primary')
+                    .text();
+                result.link = $(this)
+                    .children('div.out-thumb')
+                    .children('header')
+                    .children('h1')
+                    .children('a')
+                    .attr('href');
+                result.summary = $(this)
+                    .children('div.out-thumb')
+                    .children('header')
+                    .children('h1')
+                    .children('a')
+                    .children('span.entry-subtitle')
+                    .text();
                 
                 //Create new Article using the result object just built
                 db.Article.create(result).then(function(dbArticle) {

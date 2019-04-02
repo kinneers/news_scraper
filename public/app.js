@@ -46,7 +46,7 @@ function displayMain() {
                             ${data[i].headline}
                         </div>
                         <div class="card-body">
-                            <p class="card-text">This text will be replaced by summary</p>
+                            <p class="card-text">${data[i].summary}</p>
                             <button data-id="${data[i]._id}" class="btn btn-primary chosen">View Article</button>
                             <button data-id="${data[i]._id}" class="btn btn-danger delete">Delete Article</button>
                         </div>
@@ -67,6 +67,7 @@ function chooseArticle(articleId) {
         //Display chosen article and any current comments along with textarea for new comments 
         var headline = data[0].headline;
         var link = data[0].link;
+        var summary = data[0].summary
         var comments = data[0].comments;        
         var dataId = data[0]._id;
         $('#mainCard').html(
@@ -78,6 +79,7 @@ function chooseArticle(articleId) {
         //Calls function to display commentary associated with chosen article as main content
         $('#pageTitle').text('');
         $('#mainContent').text(`${headline}`);
+        $('#summary').text(`${summary}`);
         $('#summary').append(
             `<hr><a href="${link}" target="_blank" class="btn btn-primary">Visit: ${link}</a><hr>
             <div id="comments"></div>
