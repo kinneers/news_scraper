@@ -7,19 +7,19 @@ A web app utilizing Mongoose and Cheerio to scrape news and which also allows us
 ## Technologies Used:
 Express, Heroku, JavaScript, Mongoose, Cheerio, Bootstrap
 
-##Note:
+## Note:
 I chose to use a very basic Bootstrap layout for this app as I was more concerned with functionality that beautification.
 
-###Main Page
+### Main Page
 ![The main page](mainpage.png)
 
-###Article with Comments Page
+### Article with Comments Page
 ![The article comments page](commentspage.png)
 
-#Disclaimer:
+# Disclaimer:
 This app was designed for educational purposes and is for personal use only.  My thanks to the good people at https://sciworthy.com, from where the articles on this site have been scraped.  Please respect their content rights and always scrape responsibly!
 
-##Issues:
+## Issues:
 I originally attempted to scrape BuzzFeed and was successful... until I discovered that BuzzFeed kept changing their HTML tags.  Since I did not really want to update my code daily and had other projects to work on, I chose a different site.
 
 ## Check Out the Live Site:
