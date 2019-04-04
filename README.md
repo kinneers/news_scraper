@@ -8,7 +8,7 @@ A web app utilizing Mongoose and Cheerio to scrape news and which also allows us
 Express, Heroku, JavaScript, Mongoose, Cheerio, Bootstrap
 
 ## Note:
-I chose to use a very basic Bootstrap layout for this app as I was more concerned with functionality that beautification.
+I chose to use a very basic Bootstrap layout for this app as I was more concerned with functionality than beautification for this particular app.
 
 ### Main Page
 ![The main page](mainpage.png)
